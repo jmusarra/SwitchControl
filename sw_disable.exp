@@ -1,0 +1,57 @@
+#!usr/bin/expect --
+##########################################################################
+# sw_disable.exp
+# 
+#    This Expect script will connect to a Cisco managed switch via telnet
+#    or SSH, and disable (shutdown) a switchport. It is intended to be called
+#	   from ola_dmx_trigger, in response to DMX levels sent from a lighting
+#	   console or other DMX control device.
+#
+# Created by John Musarra (john@mightymu.net), 2014-04-18
+#
+##########################################################################
+
+set timeout 5
+set hostname [lindex $argv 0]
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
+#
+#	  Edit lines below with the username and password for the switch you
+#	  will be logging into, as well as the number of the switchport you 
+#	  want to control.
+#
+#   To minimize the chance of unwanted configuration changes, it is advised 
+#   to create a user on your switch specifically for this script, with
+#   appropriate permissions.
+#
+#
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+set username "username"
+set password "password"
+set enablepassword "password"
+set switchport "fa0/1" #TODO - add command line argument to select switchport "-c 1" selects interface fa0/1
+
+spawn telnet $hostname
+
+expect "Username:" {
+  send "$username\n"
+  expect "Password:"
+  send "$password\n"
+
+  expect ">" {
+    send "enable\n"
+    expect "Password:"
+    send "$enablepassword\n"
+
+    expect "#" {
+      send "conf t\n"
+      send "interface $switchport\n"
+      send "shutdown"
+    	
+    }
+  }
+
+ 
+}

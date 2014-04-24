@@ -1,0 +1,50 @@
+#!usr/bin/expect --
+##########################################################################
+# sc_enable.exp
+# 
+#    This Expect script will connect to a Cisco managed switch via SSH,
+#	   and enable (no shutdown) a switchport. It is intended to be called
+#	   from ola_dmx_trigger, in response to DMX levels sent from a lighting
+#	   console or other DMX control device.
+#
+# Created by John Musarra (john@sstg.us), 2014-04-18
+#
+##########################################################################
+
+set timeout 5
+set hostname [lindex $argv 0]
+
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#
+#
+# 	Edit lines below with the username and password for the switch you
+# 	will be logging into, as well as the number of the switchport you 
+# 	want to control.
+#
+#
+#+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+set username "username"
+set password "password"
+set enablepassword "password"
+set switchport "1"
+
+spawn telnet $hostname
+
+expect "Username:" {
+  send "$username\n"
+  expect "Password:"
+  send "$password\n"
+
+  expect ">" {
+    send "enable\n"
+    expect "Password:"
+    send "$enablepassword\n"
+
+    expect {
+    	
+    }
+  }
+
+ 
+}
